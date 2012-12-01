@@ -118,7 +118,6 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_twilio',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
@@ -153,5 +152,3 @@ LOGGING = {
         },
     }
 }
-
-TWILIO_DEFAULT_CALLERID = '2155551515'
