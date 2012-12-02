@@ -75,7 +75,6 @@ def phone_call_config(request, event_id):
     twilio_call_id = request.POST.CallSid
 
     event = Event(pk=event_id)
-    student = event.Student
 
 	t = template.Template(event.message.text)
     c = template.Context({'student': event.student})
