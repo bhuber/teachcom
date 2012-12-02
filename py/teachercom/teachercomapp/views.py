@@ -41,3 +41,31 @@ def send_message(student, message, message_type):
         type_of_message=message_type,
         result_of_message=4)
     event.save()
+
+def phone_call_config(request, event_id):
+    twilio_call_id = request.POST.CallSid
+
+    event = Event(pk=event_id)
+    student = event.Student
+
+    call_text = render(event.message.text, {student: student})
+
+    # TODO if student not found ?
+    # TODO if student.objects.call_notification_ind if false?
+
+    # TODO change to template
+    xml = '<?xml version="1.0" encoding="UTF-8"?><Response><Say>%s</Say></Response>' % (call_text)
+    return HttpResponse(xml)
+
+def phone_call_completed_handler(request, event_id):
+    twilio_call_id = request.POST.CallSid
+    call_status = request.POST.CallStatus
+    answered_by = request.POST.AnsweredBy
+
+    event = Event(pk=event_id)
+    student = event.Student
+
+    # TODO need to convert to enum
+    event.result_of_message = request.POST.Status
+    event.Save()
+    return render_to_response("success")
