@@ -3,10 +3,12 @@ from django.core.context_processors import csrf
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.views.decorators.cache import cache_page
+from django import template
 from teachercomapp.models import Student, Message, Event
 import datetime
 import csv
 import StringIO
+from twilio import twiml
 
 @cache_page(1)
 def index(request):
@@ -75,14 +77,17 @@ def phone_call_config(request, event_id):
     event = Event(pk=event_id)
     student = event.Student
 
-    call_text = render(event.message.text, {student: student})
+	t = template.Template(event.message.text)
+    c = template.Context({'student': event.student})
+    call_text = t.render(c)
 
     # TODO if student not found ?
     # TODO if student.objects.call_notification_ind if false?
-
-    # TODO change to template
-    xml = '<?xml version="1.0" encoding="UTF-8"?><Response><Say>%s</Say></Response>' % (call_text)
-    return HttpResponse(xml)
+	
+	r = twiml.Response()
+	r.say(call_text)
+	
+    return HttpResponse(str(r))
 
 def phone_call_completed_handler(request, event_id):
     twilio_call_id = request.POST.CallSid
